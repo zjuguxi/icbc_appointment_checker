@@ -8,16 +8,29 @@ import os
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from faker import Faker
 
 # Load configuration from YAML file
 def load_config(config_path):
     with open(config_path, 'r') as file:
         return yaml.safe_load(file)
 
+# Generate fake headers using Faker
+def generate_headers():
+    fake = Faker()
+    headers = {
+        'Content-type': 'application/json',
+        'User-Agent': fake.user_agent(),
+        'Sec-Ch-Ua-Platform': fake.random_element(elements=["Windows", "macOS", "Linux"]),
+        'Sec-Ch-Ua': f'"Chromium";v="{fake.random_int(min=70, max=100)}", "Google Chrome";v="{fake.random_int(min=70, max=100)}", "Not;A=Brand";v="99"',
+        'Dnt': '1'
+    }
+    return headers
+
 # Get the authorization token
 def get_token(config):
     login_url = "https://onlinebusiness.icbc.com/deas-api/v1/webLogin/webLogin"
-    headers = config['headers']
+    headers = generate_headers()
     payload = {
         "drvrLastName": config['icbc']['drvrLastName'],
         "licenceNumber": config['icbc']['licenceNumber'],
@@ -46,7 +59,7 @@ def get_token(config):
 # Get available appointments
 def get_appointments(config, token):
     appointment_url = "https://onlinebusiness.icbc.com/deas-api/v1/web/getAvailableAppointments"
-    headers = config['headers']
+    headers = generate_headers()
     headers['Authorization'] = token
     
     payload = {
@@ -64,7 +77,7 @@ def get_appointments(config, token):
 
     # Log response details
     logger.debug(f"Response Status Code: {response.status_code}")
-    logger.debug(f"Response Text: {response.text}")
+    # logger.debug(f"Response Text: {response.text}")
 
     if response.status_code == 200:
         appointments = response.json()[:10]
