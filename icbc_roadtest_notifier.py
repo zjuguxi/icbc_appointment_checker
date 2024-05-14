@@ -38,7 +38,7 @@ def get_appointments(config, token):
     headers['Authorization'] = token
     
     payload = {
-        "aPosID": 273,
+        "aPosID": config['icbc']['location'],
         "examType": str(config['icbc']['examClass']) + "-R-1",
         "examDate": config['icbc']['expactAfterDate'],
         "ignoreReserveTime": "false",
