@@ -1,10 +1,10 @@
 # ICBC Appointment Checker
 
-This script checks for available appointments at various ICBC locations and sends email notifications if there are any changes.
+This script checks for available road test appointments at various ICBC locations and sends email notifications if there are any changes.
 
 ## Features
 
-- Checks for available appointments at specified ICBC locations.
+- Checks for available road test appointments at specified ICBC locations.
 - Sends email notifications if there are any changes in the available appointments.
 - Saves the latest appointments to a text file.
 
