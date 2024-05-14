@@ -82,7 +82,7 @@ def get_appointments(config, token):
     if response.status_code == 200:
         appointments = response.json()[:10]
         for appointment in appointments:
-            logger.debug(appointment)
+            # logger.debug(appointment)
             date = appointment["appointmentDt"]["date"]
             day_of_week = appointment["appointmentDt"]["dayOfWeek"]
             time = appointment["startTm"]
