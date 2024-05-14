@@ -1,0 +1,21 @@
+icbc:
+  drvrLastName: "YourLastName"
+  licenceNumber: "YourLicenceNumber"
+  keyword: "YourKeyword"
+  expactAfterDate: "2024-05-01"
+  expactBeforeDate: "2024-06-01"
+  expactAfterTime: "08:00"
+  expactBeforeTime: "17:00"
+  examClass: "5"
+  posID: "8"
+  prfDaysOfWeek: "[0,1,2,3,4,5,6]"
+  prfPartsOfDay: "[0,1]"
+
+email:
+  smtp_server: "smtp.your-email-provider.com"
+  smtp_port: 587
+  sender_address: "your_email@provider.com"
+  sender_pass: "your_password"
+  receiver_addresses:
+    - "receiver1_email@provider.com"
+    - "receiver2_email@provider.com"
