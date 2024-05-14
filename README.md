@@ -77,17 +77,18 @@ The script will check for available appointments and send email notifications to
 
 ## Location Parameters
 
-    | Location | posID |
-    |---|---|
-    | Richmond claim centre (Elmbridge Way) | 273 |
-    | Richmond driver licensing (Lansdowne Centre mall)| 93 |
-    | Vancouver driver licensing (Point Grey)| 9 |
-    | Vancouver claim centre (Kingsway) | 275 |
-    | Burnaby claim centre (Wayburne Drive) | 274 |
-    | Surrey driver licensing | 11 |
-    | Newton claim centre (68 Avenue) | 271 |
-    | Surrey claim centre (152A St.) | 269 |
-    | North Vancouver driver licensing | 8 |
+| Location                                         | posID |
+|--------------------------------------------------|-------|
+| Richmond claim centre (Elmbridge Way)            | 273   |
+| Richmond driver licensing (Lansdowne Centre mall)| 93    |
+| Vancouver driver licensing (Point Grey)          | 9     |
+| Vancouver claim centre (Kingsway)                | 275   |
+| Burnaby claim centre (Wayburne Drive)            | 274   |
+| Surrey driver licensing                          | 11    |
+| Newton claim centre (68 Avenue)                  | 271   |
+| Surrey claim centre (152A St.)                   | 269   |
+| North Vancouver driver licensing                 | 8     |
+
 
 
 ## License
