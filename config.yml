@@ -7,6 +7,9 @@ icbc:
   expactAfterTime: "08:00"
   expactBeforeTime: "17:00"
   examClass: "5"
+  posID: "8"
+  prfDaysOfWeek: "[0,1,2,3,4,5,6]"
+  prfPartsOfDay: "[0,1]"
 
 headers:
   Content-type: "application/json"

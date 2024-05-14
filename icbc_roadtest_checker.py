@@ -1,3 +1,4 @@
+import argparse
 import requests
 import json
 import yaml
@@ -22,33 +23,48 @@ def get_token(config):
         "licenceNumber": config['icbc']['licenceNumber'],
         "keyword": config['icbc']['keyword']
     }
+
+    # Log request details
+    logger.debug(f"Request URL: {login_url}")
+    logger.debug(f"Request Headers: {headers}")
+    logger.debug(f"Request Payload: {payload}")
+
     response = requests.put(login_url, data=json.dumps(payload), headers=headers)
+
+    # Log response details
+    logger.debug(f"Response Status Code: {response.status_code}")
+    logger.debug(f"Response Text: {response.text}")
 
     if response.status_code == 200:
         logger.debug(response.headers)
         logger.debug(response.headers["Authorization"])
         return response.headers["Authorization"]
-    logger.error("Failed to get token")
-    return ""
+    else:
+        logger.error("Failed to get token")
+        return ""
 
 # Get available appointments
 def get_appointments(config, token):
     appointment_url = "https://onlinebusiness.icbc.com/deas-api/v1/web/getAvailableAppointments"
-    headers = config['headers'].copy()
+    headers = config['headers']
     headers['Authorization'] = token
     
     payload = {
-        "aPosID": config['icbc']['location'],
+        "aPosID": config['icbc']['posID'],
         "examType": str(config['icbc']['examClass']) + "-R-1",
         "examDate": config['icbc']['expactAfterDate'],
         "ignoreReserveTime": "false",
-        "prfDaysOfWeek": "[0,1,2,3,4,5,6]",
-        "prfPartsOfDay": "[0,1]",
+        "prfDaysOfWeek": config['icbc']['prfDaysOfWeek'],
+        "prfPartsOfDay": config['icbc']['prfPartsOfDay'],
         "lastName": config['icbc']['drvrLastName'],
         "licenseNumber": config['icbc']['licenceNumber']
     }
 
     response = requests.post(appointment_url, data=json.dumps(payload), headers=headers)
+
+    # Log response details
+    logger.debug(f"Response Status Code: {response.status_code}")
+    logger.debug(f"Response Text: {response.text}")
 
     if response.status_code == 200:
         appointments = response.json()[:10]
@@ -137,7 +153,13 @@ def format_appointments(appointments):
     return formatted
 
 def main():
-    config = load_config('./config.yml')
+    # Parse command-line arguments
+    parser = argparse.ArgumentParser(description="ICBC Appointment Checker")
+    parser.add_argument('config', type=str, help='Path to the config file')
+    args = parser.parse_args()
+
+    # Load configuration
+    config = load_config(args.config)
     token = get_token(config)
     if not token:
         logger.error("No token received. Exiting.")
