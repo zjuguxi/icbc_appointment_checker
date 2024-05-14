@@ -5,7 +5,7 @@ This script checks for available appointments at various ICBC locations and send
 ## Features
 
 - Checks for available appointments at specified ICBC locations.
-- Sends email notifications to specified recipients if there are any changes in the available appointments.
+- Sends email notifications if there are any changes in the available appointments.
 - Saves the latest appointments to a text file.
 
 ## Requirements
@@ -14,6 +14,7 @@ This script checks for available appointments at various ICBC locations and send
 - `requests` library
 - `pyyaml` library
 - `loguru` library
+- `faker` library
 
 ## Installation
 
@@ -27,12 +28,18 @@ This script checks for available appointments at various ICBC locations and send
 2. Install the required Python libraries:
 
     ```bash
-    pip install requests pyyaml loguru
+    pip install requests pyyaml loguru faker
     ```
 
 ## Configuration
 
-Create a `config.yml` file in the project directory with the following content:
+1. Create a `config.yml` file in the project directory. You can use the provided `config.yml.example` as a template:
+
+    ```bash
+    cp config.yml.example config.yml
+    ```
+
+2. Edit the `config.yml` file with your own details:
 
     ```yaml
     icbc:
@@ -43,15 +50,10 @@ Create a `config.yml` file in the project directory with the following content:
       expactBeforeDate: "2024-06-01"
       expactAfterTime: "08:00"
       expactBeforeTime: "17:00"
-      location: "8”
       examClass: "5"
-
-    headers:
-      Content-type: "application/json"
-      User-Agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
-      Sec-Ch-Ua-Platform: "macOS"
-      Sec-Ch-Ua: '"Chromium";v="124", "Microsoft Edge";v="124", "Not-A.Brand";v="99"'
-      Dnt: "1"
+      posID: 273
+      prfDaysOfWeek: "[0,1,2,3,4,5,6]"
+      prfPartsOfDay: "[0,1]"
 
     email:
       smtp_server: "smtp.your-email-provider.com"
@@ -65,10 +67,10 @@ Create a `config.yml` file in the project directory with the following content:
 
 ## Usage
 
-Run the script:
+Run the script with the specified config file:
 
     ```bash
-    python icbc_appointment_checker.py
+    python icbc_appointment_checker.py config.yml
     ```
 
 The script will check for available appointments and send email notifications to the specified recipients if there are any changes.
