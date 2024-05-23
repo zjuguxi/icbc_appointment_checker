@@ -11,10 +11,10 @@ This script checks for available road test appointments at various ICBC location
 ## Requirements
 
 - Python 3.x
-- `requests` library
-- `pyyaml` library
-- `loguru` library
-- `faker` library
+- `requests`
+- `pyyaml`
+- `loguru`
+- `faker`
 
 ## Installation
 
@@ -73,7 +73,27 @@ Run the script with the specified config file:
     python icbc_appointment_checker.py config.yml
     ```
 
-The script will check for available appointments and send email notifications to the specified recipients if there are any changes.
+## Scheduling with Crontab
+
+To schedule the script to run at regular intervals, you can use `crontab`. Here’s how to set it up:
+
+1. Open the crontab editor:
+
+    ```bash
+    crontab -e
+    ```
+
+2. Add a new line to schedule the script. For example, to run the script every hour, add:
+
+    ```bash
+    0 * * * * /usr/bin/python3 /path/to/icbc_appointment_checker.py /path/to/config.yml
+    ```
+
+    Replace `/usr/bin/python3` with the path to your Python 3 executable, and `/path/to/icbc_appointment_checker.py` and `/path/to/config.yml` with the correct paths to the script and configuration file.
+
+3. Save and exit the editor.
+
+The script will now run every hour and check for available ICBC appointments and send email notifications to the specified recipients if there are any changes.
 
 ## Location Parameters
 
