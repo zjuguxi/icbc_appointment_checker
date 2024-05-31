@@ -76,7 +76,7 @@ def get_appointments(config, token):
     response = requests.post(appointment_url, data=json.dumps(payload), headers=headers)
 
     # Log response details
-    logger.debug(f"Response Status Code: {response.status_code}")
+    logger.info(f"Response Status Code: {response.status_code}")
     # logger.debug(f"Response Text: {response.text}")
 
     if response.status_code == 200:
@@ -88,7 +88,7 @@ def get_appointments(config, token):
             time = appointment["startTm"]
             date_obj = datetime.strptime(date, "%Y-%m-%d")
             formatted_date = date_obj.strftime("%Y-%m-%d %A")
-            logger.debug(f"{formatted_date} {time}")
+            logger.info(f"{formatted_date} {time}")
         return appointments
     logger.error("Authorization error or failed to get appointments")
     return []
