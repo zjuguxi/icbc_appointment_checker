@@ -5,7 +5,6 @@ __pycache__/
 
 # personal configuration
 *.yml
-*.txt
 
 # C extensions
 *.so
