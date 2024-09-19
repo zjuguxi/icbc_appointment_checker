@@ -21,7 +21,7 @@ This script checks for available road test appointments at various ICBC location
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/yourusername/icbc-appointment-checker.git
+    git clone https://github.com/zjuguxi/icbc-appointment-checker.git
     cd icbc-appointment-checker
     ```
 
