@@ -65,7 +65,7 @@ def get_appointments(config, token):
     payload = {
         "aPosID": config['icbc']['posID'],
         "examType": str(config['icbc']['examClass']) + "-R-1",
-        "examDate": config['icbc']['expactAfterDate'],
+        "examDate": config['icbc']['expactAfterDate'],  # 确保这里的值是正确的
         "ignoreReserveTime": "false",
         "prfDaysOfWeek": config['icbc']['prfDaysOfWeek'],
         "prfPartsOfDay": config['icbc']['prfPartsOfDay'],
@@ -73,23 +73,32 @@ def get_appointments(config, token):
         "licenseNumber": config['icbc']['licenceNumber']
     }
 
+    logger.debug(f"Payload for appointments request: {payload}")  # 打印请求负载
+
     response = requests.post(appointment_url, data=json.dumps(payload), headers=headers)
 
     # Log response details
     logger.info(f"Response Status Code: {response.status_code}")
-    # logger.debug(f"Response Text: {response.text}")
+    # logger.debug(f"Response Text: {response.text}")  # 打印响应文本
 
     if response.status_code == 200:
-        appointments = response.json()[:10]
-        for appointment in appointments:
-            # logger.debug(appointment)   
-            date = appointment["appointmentDt"]["date"]
-            day_of_week = appointment["appointmentDt"]["dayOfWeek"]
-            time = appointment["startTm"]
-            date_obj = datetime.strptime(date, "%Y-%m-%d")
-            formatted_date = date_obj.strftime("%Y-%m-%d %A")
-            logger.info(f"{formatted_date} {time}")
-        return appointments
+        appointments = response.json()
+        if isinstance(appointments, list):
+            # 过滤符合时间段的预约
+            filtered_appointments = []
+            for appt in appointments:
+                date = appt["appointmentDt"]["date"]
+                time = appt["startTm"]
+                
+                # 校验日期和时间
+                if (config['icbc']['expactAfterDate'] <= date <= config['icbc']['expactBeforeDate'] and
+                    config['icbc']['expactAfterTime'] <= time <= config['icbc']['expactBeforeTime']):
+                    filtered_appointments.append(appt)
+
+            logger.info(f"Filtered Appointments: {filtered_appointments}")  # 打印过滤后的预约
+            return filtered_appointments
+        else:
+            logger.error("Unexpected response format")
     logger.error("Authorization error or failed to get appointments")
     return []
 
@@ -176,22 +185,21 @@ def update_appointments_if_needed(new_appointments, old_appointments, config):
     old_first_date = min(appt["appointmentDt"]["date"] for appt in old_appointments)
 
     # 获取新预约的最早日期
-    if new_appointments:
-        new_first_date = min(appt["appointmentDt"]["date"] for appt in new_appointments)
+    new_first_date = min(appt["appointmentDt"]["date"] for appt in new_appointments) if new_appointments else None
 
-        # 如果新预约的最早日期不早于旧预约的最早日期，则不更新
-        if new_first_date >= old_first_date:
-            logger.info("No new appointments earlier than the existing ones. No update required.")
-            return
-
-    # 如果有变化，发送邮件并更新文件
+    # 检查是否有变化
     if compare_appointments(old_appointments, new_appointments):
-        subject = "ICBC Appointment Changes"
-        body = format_appointments(new_appointments)
-        send_email(subject, body, config)
+        # 更新文件
+        save_appointments_to_txt(new_appointments, 'appointments.txt')
+        logger.info("Appointments updated in appointments.txt.")
 
-    # Save the latest appointments to a text file
-    save_appointments_to_txt(new_appointments, 'appointments.txt')
+        # 如果新预约的最早日期早于旧预约的最早日期，发送邮件
+        if new_first_date and new_first_date < old_first_date:
+            subject = "ICBC Appointment Changes"
+            body = format_appointments(new_appointments)
+            send_email(subject, body, config)
+    else:
+        logger.info("No changes in appointments. No update required.")
 
 def main():
     # Parse command-line arguments
