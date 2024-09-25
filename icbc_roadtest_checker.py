@@ -166,6 +166,33 @@ def format_appointments(appointments):
         formatted += f"{date} ({day_of_week}) at {time}\n"
     return formatted
 
+def update_appointments_if_needed(new_appointments, old_appointments, config):
+    if not old_appointments:
+        logger.info("No previous appointments found. Saving new appointments.")
+        save_appointments_to_txt(new_appointments, 'appointments.txt')
+        return
+
+    # 获取旧预约的最早日期
+    old_first_date = min(appt["appointmentDt"]["date"] for appt in old_appointments)
+
+    # 获取新预约的最早日期
+    if new_appointments:
+        new_first_date = min(appt["appointmentDt"]["date"] for appt in new_appointments)
+
+        # 如果新预约的最早日期不早于旧预约的最早日期，则不更新
+        if new_first_date >= old_first_date:
+            logger.info("No new appointments earlier than the existing ones. No update required.")
+            return
+
+    # 如果有变化，发送邮件并更新文件
+    if compare_appointments(old_appointments, new_appointments):
+        subject = "ICBC Appointment Changes"
+        body = format_appointments(new_appointments)
+        send_email(subject, body, config)
+
+    # Save the latest appointments to a text file
+    save_appointments_to_txt(new_appointments, 'appointments.txt')
+
 def main():
     # Parse command-line arguments
     parser = argparse.ArgumentParser(description="ICBC Appointment Checker")
@@ -182,13 +209,8 @@ def main():
     new_appointments = get_appointments(config, token)
     old_appointments = load_appointments_from_txt('appointments.txt')
 
-    if compare_appointments(old_appointments, new_appointments):
-        subject = "ICBC Appointment Changes"
-        body = format_appointments(new_appointments)
-        send_email(subject, body, config)
-
-    # Save the latest appointments to a text file
-    save_appointments_to_txt(new_appointments, 'appointments.txt')
+    # 调用新函数处理更新逻辑
+    update_appointments_if_needed(new_appointments, old_appointments, config)
 
 if __name__ == "__main__":
     main()
