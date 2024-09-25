@@ -65,7 +65,7 @@ def get_appointments(config, token):
     payload = {
         "aPosID": config['icbc']['posID'],
         "examType": str(config['icbc']['examClass']) + "-R-1",
-        "examDate": config['icbc']['expactAfterDate'],  # 确保这里的值是正确的
+        "examDate": config['icbc']['expactAfterDate'],  # Ensure this value is correct
         "ignoreReserveTime": "false",
         "prfDaysOfWeek": config['icbc']['prfDaysOfWeek'],
         "prfPartsOfDay": config['icbc']['prfPartsOfDay'],
@@ -73,29 +73,29 @@ def get_appointments(config, token):
         "licenseNumber": config['icbc']['licenceNumber']
     }
 
-    logger.debug(f"Payload for appointments request: {payload}")  # 打印请求负载
+    logger.debug(f"Payload for appointments request: {payload}")  # Print request payload
 
     response = requests.post(appointment_url, data=json.dumps(payload), headers=headers)
 
     # Log response details
     logger.info(f"Response Status Code: {response.status_code}")
-    # logger.debug(f"Response Text: {response.text}")  # 打印响应文本
+    # logger.debug(f"Response Text: {response.text}")  # Print response text
 
     if response.status_code == 200:
         appointments = response.json()
         if isinstance(appointments, list):
-            # 过滤符合时间段的预约
+            # Filter appointments that meet the time range
             filtered_appointments = []
             for appt in appointments:
                 date = appt["appointmentDt"]["date"]
                 time = appt["startTm"]
                 
-                # 校验日期和时间
+                # Validate date and time
                 if (config['icbc']['expactAfterDate'] <= date <= config['icbc']['expactBeforeDate'] and
                     config['icbc']['expactAfterTime'] <= time <= config['icbc']['expactBeforeTime']):
                     filtered_appointments.append(appt)
 
-            logger.info(f"Filtered Appointments: {filtered_appointments}")  # 打印过滤后的预约
+            logger.info(f"Filtered Appointments: {filtered_appointments}")  # Print filtered appointments
             return filtered_appointments
         else:
             logger.error("Unexpected response format")
@@ -146,8 +146,8 @@ def send_email(subject, body, config):
     # Send the email to each recipient
     try:
         session = smtplib.SMTP(smtp_server, smtp_port)
-        session.starttls() # Enable security
-        session.login(sender_address, sender_pass) # Login with sender's email and password
+        session.starttls()  # Enable security
+        session.login(sender_address, sender_pass)  # Login with sender's email and password
 
         for receiver_address in receiver_addresses:
             # Setup the MIME for each recipient
@@ -181,19 +181,19 @@ def update_appointments_if_needed(new_appointments, old_appointments, config):
         save_appointments_to_txt(new_appointments, 'appointments.txt')
         return
 
-    # 获取旧预约的最早日期
+    # Get the earliest date of old appointments
     old_first_date = min(appt["appointmentDt"]["date"] for appt in old_appointments)
 
-    # 获取新预约的最早日期
+    # Get the earliest date of new appointments
     new_first_date = min(appt["appointmentDt"]["date"] for appt in new_appointments) if new_appointments else None
 
-    # 检查是否有变化
+    # Check for changes
     if compare_appointments(old_appointments, new_appointments):
-        # 更新文件
+        # Update the file
         save_appointments_to_txt(new_appointments, 'appointments.txt')
         logger.info("Appointments updated in appointments.txt.")
 
-        # 如果新预约的最早日期早于旧预约的最早日期，发送邮件
+        # If the earliest date of new appointments is earlier than the old ones, send an email
         if new_first_date and new_first_date < old_first_date:
             subject = "ICBC Appointment Changes"
             body = format_appointments(new_appointments)
@@ -217,7 +217,7 @@ def main():
     new_appointments = get_appointments(config, token)
     old_appointments = load_appointments_from_txt('appointments.txt')
 
-    # 调用新函数处理更新逻辑
+    # Call the new function to handle update logic
     update_appointments_if_needed(new_appointments, old_appointments, config)
 
 if __name__ == "__main__":
