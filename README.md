@@ -110,6 +110,8 @@ The script will now run every hour and check for available ICBC appointments and
 | North Vancouver driver licensing                 | 8     |
 
 
+## Changelog
+See the full changelog in [CHANGELOG.md](./CHANGELOG.md).
 
 ## License
 
