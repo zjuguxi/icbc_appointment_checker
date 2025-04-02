@@ -8,6 +8,26 @@ This script checks for available road test appointments at various ICBC location
 - Sends email notifications if there are any changes in the available appointments.
 - Saves the latest appointments to a text file.
 
+## iOS Shortcut Solution
+
+![iOS shortcuts logo](./resources/iOS_shortcuts_logo.png)
+
+This script is now available as an iOS Shortcut, which allows you to download the script to your iOS device with 1-click and set up notifications alerts for when an appointment is available.
+
+### Steps
+
+1. Download the [Scriptable App from the App Store](https://apps.apple.com/us/app/scriptable/id1405459188)
+1. Download the [iOS Shortcut from this link](https://www.icloud.com/shortcuts/6a3b5ec64fcd4ffe87076f6062add689)
+1. Go to the Shortcuts app
+    1. Click on `Shortcuts`, click on this shortcut, and enter your details.
+    1. Click on `Automation`, add a new automation.
+        1. Click `Time of Day`
+        1. Click `Run Immediately`
+        1. Turn off `Notify When Run`
+        1. Select the `ICBC Drivers Test Appointment` shortcut
+
+Done! Now you will get a notification when the next appointment becomes available.
+
 ## Requirements
 
 - Python 3.x
